@@ -56,5 +56,4 @@ Expand the directory through provider partnerships, add provider-reviewed update
 6. Open Community helper and ask: “What should I bring to Wake Relief?”
 7. Show the answer and source links. End with: “FoodBridge turns a confusing search into a local map and a clear next step.”
 
-## Submission completion notes
-The MLH submission form is behind sign-in. Its exact fields, required media, team-member details, event-specific certifications, and any final consent still need to be checked in the signed-in form. Do not claim this document proves acceptance or eligibility for a prize track. If a video is required, record the demo above and provide the actual uploaded video URL.
+

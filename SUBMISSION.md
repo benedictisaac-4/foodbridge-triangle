@@ -13,7 +13,7 @@ Food Insecurity and Community Resource Mapping
 - Live application: https://foodbridge-triangle-ben.wintrytitan1025.chatgpt.site
 - Public source repository: https://github.com/benedictisaac-4/foodbridge-triangle
 - License: MIT for the application code; third-party licenses and model/API terms remain separate.
-- Full source: download and extract FoodBridge-source.zip from the repository.
+- Full source: clone the repository; application code is directly browsable. The ZIP is an earlier source snapshot.
 
 ## Short description
 FoodBridge Triangle helps Raleigh and Wake County residents find food resources, understand published access requirements, and make a next-step plan. It combines a sourced resource directory, location map, saved plans, a structured support guide, and a Gemma 4 community helper.

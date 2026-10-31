@@ -1,48 +1,105 @@
 # FoodBridge Triangle 🌿
 
-A Hack for Humanity prototype helping Raleigh / Wake County residents find food resources, understand published access requirements, and plan their next step.
+**Find local food support and a clear next step, with Gemma 4.**
 
-## Features
-- Sourced directory of four physical food services and three referral/benefit resources.
-- Search by resource name or listed address; category filters and selected-location map.
-- Browser-local saved resource plan with print support.
-- Deterministic support guide with service-area and transportation questions.
-- Gemma 4 helper grounded in the curated records; explicit disconnected/error states.
-- Mobile-friendly, keyboard-accessible interface. No applicant accounts or identity documents.
+Built for Hack for Humanity: Raleigh · Food Insecurity and Community Resource Mapping.
 
-## Run locally
-Requires Node 22.13 or later.
+[Open the live demo](https://foodbridge-triangle-ben.wintrytitan1025.chatgpt.site) · [Project story and demo script](SUBMISSION.md) · [MIT license](LICENSE)
+
+![Gemma answering a food-resource question](FoodBridge-demo.jpg)
+
+## For judges
+
+1. Open the live demo and filter **Groceries**.
+2. Select **Wake Relief → Show on map**, expand requirements, and save it.
+3. Open **My plan** to see saved resources and the print option.
+4. Try **Support guide** with a transportation need.
+5. Open **Community helper** and ask **“What should I bring to Wake Relief?”**
+
+The public demo needs no visitor API key. It uses Google-hosted **Gemma**, model `gemma-4-26b-a4b-it`. The application code, tests, and resources are directly browsable in this repository. The earlier source ZIP is retained as a historical snapshot; use the current source tree for development.
+
+## What works
+
+- Seven source-attributed resources: four physical Raleigh food services and three directory/benefits resources.
+- Search by name or listed address, category filters, selected-location map, and directions.
+- Published requirements, source links, and source-check dates.
+- Browser-local saved resource plans and printing.
+- A deterministic support guide covering food needs, residency, and transportation uncertainty.
+- A source-grounded Gemma helper with useful API failure states.
+
+This prototype does not determine official benefits eligibility, verify live food inventory, confirm transportation, or submit applications. Search matches addresses rather than distance or service-area boundaries. Call providers to confirm before traveling.
+
+## Run from source
+
+Use **Node.js 22.13+** (Node 24 recommended) and pnpm **11.25.0**.
 
 ```sh
-npm install
-npm run dev
+git clone https://github.com/benedictisaac-4/foodbridge-triangle.git
+cd foodbridge-triangle
+npm install --global pnpm@11.25.0
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-To enable AI, configure a server environment variable `GEMMA_API_KEY` with a Google AI Studio key. Optional: `GEMMA_MODEL=gemma-4-26b-a4b-it`. Do not use NEXT_PUBLIC_ for secrets or commit keys. Local environment files are ignored. Restart the server after configuration. Google API guide: https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api
+Open the local URL printed in the terminal (normally http://localhost:5173). No API key is required for browsing resources or using the support guide.
 
-The site uses Vinext / React and can deploy as a Cloudflare Worker. `npm run build` builds the deployment. Sites deployment helpers are platform tooling, not required for editing the app. For DigitalOcean, choose a Node/container deployment compatible with this runtime; a Google AI Studio key calls Google, not DigitalOcean inference.
+### Enable Gemma locally (optional)
 
-## How the AI works
-Browser → same-origin server endpoint → Google Gemini API hosting the open-weight **Gemma** model. The server adds the resource directory to a constrained prompt. Responses are displayed as text, never executed as HTML. API errors do not disable the directory. No API key is included in browser code.
+Get your own Google AI Studio key. `.env.example` lists names only; export the variable in your terminal before starting the app.
 
-The app code is MIT licensed. Gemma model weights and Google API usage remain subject to their respective terms; the app license does not relicense them.
+**macOS/Linux**
 
-## Data and limitations
-Records are in `lib/resources.ts`, checked against linked provider pages October 31, 2026. This small directory is not comprehensive. Dates indicate a source-page check, not provider confirmation. Schedules, requirements and supplies may change. Call before traveling. Directory entries are factual summaries with attribution, not copies of provider websites. No live inventory, eligibility determination, delivery verification, or benefit amount calculation. Search matches listed addresses rather than eligibility boundaries or distance. The support guide never rejects someone from applying.
+```sh
+export GEMMA_API_KEY="your-own-key"
+export GEMMA_MODEL="gemma-4-26b-a4b-it"
+pnpm dev
+```
 
-AI grounding reduces but does not eliminate hallucinations. Users should confirm advice against the source cards. Questions and resource context are sent to Google only when using the AI helper. No chat or applicant database is implemented. Bookmarked resource IDs stay in localStorage. Maps load Google Maps and link to Google directions. Production public AI endpoints need durable per-user rate limiting and abuse protection before broad rollout; the initial hosted demo is private.
+**Windows PowerShell**
 
-## Verify and demo
-1. Search `Raleigh`, filter Groceries, and select Show on map.
-2. Save Wake Relief; open My plan and print.
-3. Open Support guide, choose transportation help, and confirm uncertainty is explained.
-4. With no API key, confirm helper is visibly disconnected and other tabs work.
-5. With a valid key, ask: “I need groceries for my family in Raleigh and have no car.” Verify all claims against source cards.
+```powershell
+$env:GEMMA_API_KEY="your-own-key"
+$env:GEMMA_MODEL="gemma-4-26b-a4b-it"
+pnpm dev
+```
 
-Run automated core checks with `node --test tests/core.test.mjs`.
+Restart the server after changing configuration. Never commit a real key or use a `NEXT_PUBLIC_` variable for it. For hosted deployments, configure these names as server-side secrets and redeploy. Google API documentation: https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api
 
-## Contribute
-Update a resource with its official source and check date. Avoid adding unverified availability or rules. Submit a pull request describing the source and change. Never submit personal applicant information or API keys.
+### Validate
 
-## Pitch
-FoodBridge turns a confusing search for food assistance into a local map and a clear next-step plan, powered by source-grounded Gemma guidance.
+```sh
+pnpm test
+pnpm build
+```
+
+Nine core checks cover resource integrity, server-side secret handling, cross-origin requests, oversized requests, model response parsing, and provider failures. Tests mock the model API, require no key, and do not measure model accuracy. A portable production build was also checked with the installed dependency set. The live Gemma helper was separately tested in-browser.
+
+## Architecture and source guide
+
+| File | Purpose |
+| --- | --- |
+| `app/page.tsx` | Resource finder, saved plan, support guide, and AI helper UI |
+| `app/api/helper/route.ts` | Server-only Google API request and fallback handling |
+| `lib/resources.ts` | Curated provider records and source-check date |
+| `app/globals.css` | Responsive layout, focus states, and print styles |
+| `tests/core.test.mjs` | Core checks using Node's built-in test runner |
+| `vite.config.ts`, `worker/index.ts` | Vinext / Cloudflare Worker build |
+| `SUBMISSION.md` | Project narrative and 90-second demo |
+
+Browser → same-origin API endpoint → curated records and constrained prompt → Google-hosted Gemma → plain-text response. The directory and support guide operate without the AI API. Maps use Google Maps. The project retains framework starter components and tooling alongside the application.
+
+## Data, privacy, and limitations
+
+Records were checked against official provider pages on **October 31, 2026**. This is a small curated directory, not a provider partnership or complete county inventory. A source-check date is not a confirmation that food is available today. Every record links to its source.
+
+The app does not persist questions or applicant profiles. Saved resource IDs remain in the browser's localStorage. When a visitor asks the connected AI helper, the question and resource context are sent to Google. Avoid sharing sensitive personal information. External map requests are handled by Google Maps. Source grounding reduces but does not eliminate inaccurate model output; verify against provider sources.
+
+Durable abuse prevention, provider-managed updates, broader data coverage, and multilingual quality evaluation remain future work. The public prototype is for demonstration, not a production benefits service.
+
+## Open-source and AI disclosure
+
+Application code is **MIT licensed**. Third-party code and model/API usage retain their own terms; the application license does not relicense Gemma weights or provider website content. Third-party notices are retained under `vendor/` and `scripts/vite/`.
+
+Created during the October 31, 2026 hackathon with ChatGPT/Codex-assisted implementation and a starter framework. **Gemma 4 powers the running community helper.** No model training or fine-tuning was performed. Inference uses Google's API, not DigitalOcean inference.
+
+Contributions: use official sources, include a source-check date, and do not add unverified availability or rules. Do not submit applicant personal information or API keys.

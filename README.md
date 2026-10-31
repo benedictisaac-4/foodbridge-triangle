@@ -5,6 +5,7 @@
 Built for Hack for Humanity: Raleigh · Food Insecurity and Community Resource Mapping.
 
 [Open the live demo](https://foodbridge-triangle-ben.wintrytitan1025.chatgpt.site) · [Project story and demo script](SUBMISSION.md) · [MIT license](LICENSE)
+
 Presentation slide deck: https://docs.google.com/presentation/d/1SKRDBxWsg2yZY7TzFvxSRx41fzDBed4p/edit?slide=id.p11#slide=id.p11
 Youtube Video:https://www.youtube.com/watch?v=nQb6bXYmn6c
 
